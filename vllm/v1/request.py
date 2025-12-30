@@ -74,10 +74,14 @@ class Request:
         block_hasher: Callable[["Request"], list["BlockHash"]] | None = None,
         resumable: bool = False,
         reasoning_ended: bool | None = None,
+        num_prefix_tokens: int = 0,
     ) -> None:
         self.request_id = request_id
         self.client_index = client_index
         self.priority = priority
+        self.num_prefix_tokens = (
+            num_prefix_tokens  # Number of meta/prefix tokens prepended
+        )
         self.sampling_params = sampling_params
         self.pooling_params = pooling_params
         # Because of LoRA, the eos token id can be different for each request.
@@ -196,6 +200,7 @@ class Request:
             cache_salt=request.cache_salt,
             priority=request.priority,
             trace_headers=request.trace_headers,
+            num_prefix_tokens=request.num_prefix_tokens,
             block_hasher=block_hasher,
             resumable=request.resumable,
             reasoning_ended=request.reasoning_ended,
