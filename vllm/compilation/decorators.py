@@ -526,8 +526,10 @@ def _support_torch_compile(
 
         # Prepare inductor config patches
         # assume_32bit_indexing is only available in torch 2.10.0.dev+
+        # Use hasattr check as NVIDIA PyTorch builds (e.g. 2.10.0a0) may
+        # report >= 2.10.0.dev but lack this config key.
         inductor_config_patches = {}
-        if is_torch_equal_or_newer("2.10.0.dev"):
+        if hasattr(torch._inductor.config, "assume_32bit_indexing"):
             inductor_config_patches["assume_32bit_indexing"] = (
                 self.compilation_config.dynamic_shapes_config.assume_32_bit_indexing
             )
